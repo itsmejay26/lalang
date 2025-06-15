@@ -58,11 +58,22 @@
     .red {
       background-color: #f44336;
     }
+
+    #lyricsBox {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 3rem;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
   </style>
 </head>
 <body>
   <!-- Background Music -->
-  <audio id="bgMusic" src="okaytagal.mp3"></audio> <!-- Make sure this file is in your GitHub repo -->
+  <audio id="bgMusic" src="okaytagal.mp3"></audio> <!-- Replace with your uploaded filename -->
 
   <div id="text"></div>
 
@@ -73,6 +84,8 @@
       <div class="choice red" onclick="handleAnswer()">hindi</div>
     </div>
   </div>
+
+  <div id="lyricsBox"></div>
 
   <script>
     const messages = [
@@ -86,30 +99,21 @@
       "and the question is.."
     ];
 
-    const lyricsStartDelay = 2; // ✨ Start delay in seconds before first lyric shows
+    const lyricsStartDelay = 2; // Seconds before lyrics start
 
     const lyrics = [
-      { delay: 1, text: "Oh, kay tagal" },
+      { delay: 0, text: "Oh, kay tagal" },
       { delay: 3.7, text: "din kitang" },
       { delay: 6.5, text: "minahal" },
       { delay: 11.1, text: "Oh, kay tagal" },
       { delay: 14.8, text: "din kitang" },
-      { delay: 17.6, text: "minahal" }
+      { delay: 17.6, text: "minahal" } // last line — will stay longer
     ];
 
     const textEl = document.getElementById("text");
     const questionContainer = document.getElementById("questionContainer");
     const bgMusic = document.getElementById("bgMusic");
-
-    // 🎤 Lyrics container
-    const lyricBox = document.createElement("div");
-    lyricBox.style.position = "absolute";
-    lyricBox.style.bottom = "100px";
-    lyricBox.style.fontSize = "2rem";
-    lyricBox.style.textAlign = "center";
-    lyricBox.style.opacity = "0";
-    lyricBox.style.transition = "opacity 1s ease-in-out";
-    document.body.appendChild(lyricBox);
+    const lyricBox = document.getElementById("lyricsBox");
 
     let index = 0;
 
@@ -148,14 +152,17 @@
     }
 
     function showLyrics() {
-      lyrics.forEach((line) => {
+      lyrics.forEach((line, i) => {
         setTimeout(() => {
           lyricBox.textContent = line.text;
           lyricBox.style.opacity = 1;
 
+          // Duration: 5s for last line, 2s for others
+          const duration = (i === lyrics.length - 1) ? 5000 : 2000;
+
           setTimeout(() => {
             lyricBox.style.opacity = 0;
-          }, 2000); // fade out after 2s
+          }, duration);
         }, (lyricsStartDelay + line.delay) * 1000);
       });
     }
