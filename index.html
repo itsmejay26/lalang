@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Jay's Question</title>
+  <title>Jay's Animated Question</title>
   <style>
     body {
       margin: 0;
@@ -16,6 +16,7 @@
       align-items: center;
       flex-direction: column;
       transition: opacity 1s ease-in-out;
+      overflow: hidden;
     }
 
     #text, #questionContainer {
@@ -61,7 +62,7 @@
 </head>
 <body>
   <!-- Background Music -->
-  <audio id="bgMusic" src="okaytagal.mp3" preload="auto"></audio>
+  <audio id="bgMusic" src="okaytagal.mp3"></audio> <!-- Make sure this file is in your GitHub repo -->
 
   <div id="text"></div>
 
@@ -85,9 +86,30 @@
       "and the question is.."
     ];
 
+    const lyricsStartDelay = 2; // ✨ Start delay in seconds before first lyric shows
+
+    const lyrics = [
+      { delay: 1, text: "Oh, kay tagal" },
+      { delay: 3.7, text: "din kitang" },
+      { delay: 6.5, text: "minahal" },
+      { delay: 11.1, text: "Oh, kay tagal" },
+      { delay: 14.8, text: "din kitang" },
+      { delay: 17.6, text: "minahal" }
+    ];
+
     const textEl = document.getElementById("text");
     const questionContainer = document.getElementById("questionContainer");
     const bgMusic = document.getElementById("bgMusic");
+
+    // 🎤 Lyrics container
+    const lyricBox = document.createElement("div");
+    lyricBox.style.position = "absolute";
+    lyricBox.style.bottom = "100px";
+    lyricBox.style.fontSize = "2rem";
+    lyricBox.style.textAlign = "center";
+    lyricBox.style.opacity = "0";
+    lyricBox.style.transition = "opacity 1s ease-in-out";
+    document.body.appendChild(lyricBox);
 
     let index = 0;
 
@@ -118,10 +140,24 @@
       textEl.style.opacity = 0;
       document.body.style.opacity = 0;
 
-      // Play music after fade out
       setTimeout(() => {
         bgMusic.play();
+        document.body.style.opacity = 1;
+        showLyrics();
       }, 1000);
+    }
+
+    function showLyrics() {
+      lyrics.forEach((line) => {
+        setTimeout(() => {
+          lyricBox.textContent = line.text;
+          lyricBox.style.opacity = 1;
+
+          setTimeout(() => {
+            lyricBox.style.opacity = 0;
+          }, 2000); // fade out after 2s
+        }, (lyricsStartDelay + line.delay) * 1000);
+      });
     }
 
     showMessage();
