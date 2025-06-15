@@ -76,8 +76,8 @@
 </head>
 <body>
   <!-- Background Music -->
-  <audio id="okayTagalAudio" src="okaytagal.mp3"></audio>
-  <audio id="ooAudio" src="oo.mp3"></audio>
+  <audio id="okayTagalAudio" src="okaytagal.mp3" preload="auto"></audio>
+  <audio id="ooAudio" src="oo.mp3" preload="auto"></audio>
 
   <div id="text"></div>
 
@@ -109,24 +109,24 @@
       { delay: 7, text: "minahal" },
       { delay: 11.8, text: "Oh, kay tagal" },
       { delay: 14.8, text: "din kitang" },
-      { delay: 17.6, text: "minahal" }
+      { delay: 17.6, text: "minahal", final: true }
     ];
 
     const ooLyrics = [
-      { start: 0.5, end: 2.8, text: "wag mong piliting mahalin ka ng taong alam mong" },
-      { start: 3.1, end: 4.8, text: "may mahal ng iba" },
-      { start: 5.6, end: 7.0, text: "tandaan mo" },
-      { start: 7.3, end: 8.8, text: "hindi ka pinanganak sa mundong ito" },
-      { start: 9.2, end: 10.1, text: "para mang limos" },
-      { start: 10.5, end: 12.1, text: "ng pag mamahal :(" },
-      { start: 12.4, end: 13.7, text: "at maging" },
-      { start: 14.0, end: 14.9, text: "pangalawa lang" },
-      { start: 15.1, end: 16.7, text: "sa kanya" },
-      { start: 17.0, end: 18.8, text: "meron kang option" },
-      { start: 19.1, end: 19.9, text: "ang palayain sya" },
-      { start: 20.2, end: 21.1, text: "at humanap ng taong" },
-      { start: 21.3, end: 23.0, text: "ikaw lang ang nag iisang" },
-      { start: 23.7, end: 26.5, text: "mamahalin :(" }
+      { start: 0.2, end: 3.4, text: "wag mong piliting mahalin ka ng taong alam mong" },
+      { start: 3.5, end: 5.5, text: "may mahal ng iba" },
+      { start: 5.6, end: 7.2, text: "tandaan mo" },
+      { start: 7.3, end: 9.1, text: "hindi ka pinanganak sa mundong ito" },
+      { start: 9.2, end: 10.4, text: "para mang limos" },
+      { start: 10.5, end: 12.3, text: "ng pag mamahal :(" },
+      { start: 12.4, end: 13.9, text: "at maging" },
+      { start: 14.0, end: 15.0, text: "pangalawa lang" },
+      { start: 15.1, end: 16.9, text: "sa kanya" },
+      { start: 17.0, end: 19.0, text: "meron kang option" },
+      { start: 19.1, end: 20.1, text: "ang palayain sya" },
+      { start: 20.2, end: 21.2, text: "at humanap ng taong" },
+      { start: 21.3, end: 23.6, text: "ikaw lang ang nag iisang" },
+      { start: 23.7, end: 26.5, text: "mamahalin :(", final: true }
     ];
 
     const textEl = document.getElementById("text");
@@ -160,43 +160,58 @@
     function playHindiNa() {
       questionContainer.style.opacity = 0;
       document.body.style.opacity = 0;
+
+      okayTagalAudio.pause();
+      okayTagalAudio.currentTime = 0;
+
       setTimeout(() => {
         document.body.style.opacity = 1;
-        okayTagalAudio.play();
-        showLyrics(originalLyrics, 1.5, true);
+        okayTagalAudio.play().then(() => {
+          showLyrics(originalLyrics, true, 1.5);
+        });
       }, 1000);
     }
 
     function playOO() {
       questionContainer.style.opacity = 0;
       document.body.style.opacity = 0;
+
+      ooAudio.pause();
+      ooAudio.currentTime = 0;
+
       setTimeout(() => {
-        // Change background and lyrics color
         document.body.style.backgroundColor = "black";
         document.body.style.color = "white";
         lyricBox.style.color = "white";
-
         document.body.style.opacity = 1;
-        ooAudio.play();
-        showLyrics(ooLyrics, 0, false);
+
+        ooAudio.play().then(() => {
+          showLyrics(ooLyrics, false);
+        });
       }, 1000);
     }
 
-    function showLyrics(lyricsList, startDelay = 0, isDelayBased = true) {
+    function showLyrics(lyricsList, isDelayBased = false, delayOffset = 0) {
       lyricsList.forEach((line) => {
-        const showTime = isDelayBased ? (startDelay + line.delay) * 1000 : line.start * 1000;
-        const hideTime = isDelayBased ? (showTime + 2000) : line.end * 1000;
-        const duration = hideTime - showTime;
+        const startTime = isDelayBased ? (delayOffset + line.delay) * 1000 : line.start * 1000;
+        const endTime = isDelayBased
+          ? (startTime + 2000)
+          : line.final
+          ? line.end * 1000 + 6000 // extend 6s fade for final line
+          : line.end * 1000;
+
+        const duration = endTime - startTime;
 
         setTimeout(() => {
           lyricBox.textContent = line.text;
           lyricBox.style.transition = `opacity ${duration < 1500 ? 0.3 : 1}s ease-in-out`;
           lyricBox.style.opacity = 1;
-        }, showTime);
+        }, startTime);
 
         setTimeout(() => {
+          lyricBox.style.transition = `opacity ${line.final ? 6 : 0.5}s ease-in-out`;
           lyricBox.style.opacity = 0;
-        }, hideTime);
+        }, endTime);
       });
     }
 
