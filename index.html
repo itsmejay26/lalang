@@ -3,13 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <title>Jay's Random Question</title>
+
+  <!-- Load Shadows Into Light font from Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap" rel="stylesheet">
+
   <style>
     body {
       margin: 0;
       padding: 0;
       background-color: white;
       color: black;
-      font-family: Arial, sans-serif;
+      font-family: 'Shadows Into Light', cursive;
       height: 100vh;
       display: flex;
       justify-content: center;
@@ -68,12 +72,13 @@
       text-align: center;
       opacity: 0;
       transition: opacity 1s ease-in-out;
+      font-family: 'Shadows Into Light', cursive;
     }
   </style>
 </head>
 <body>
   <!-- Background Music -->
-  <audio id="bgMusic" src="okaytagal.mp3"></audio> <!-- Replace with your uploaded filename -->
+  <audio id="bgMusic" src="okaytagal.mp3"></audio> <!-- Your local file -->
 
   <div id="text"></div>
 
@@ -170,4 +175,4 @@
     showMessage();
   </script>
 </body>
-</html>
+  </html>
