@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Jay's Question</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: white;
+      color: black;
+      font-family: Arial, sans-serif;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      transition: opacity 1s ease-in-out;
+    }
+
+    #text, #questionContainer {
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+      text-align: center;
+    }
+
+    #text {
+      font-size: 2.5rem;
+      max-width: 90vw;
+    }
+
+    #question {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+
+    .choice {
+      padding: 15px 40px;
+      font-size: 1.5rem;
+      color: white;
+      border-radius: 10px;
+      cursor: pointer;
+      width: 150px;
+      text-align: center;
+      margin: 10px;
+      transition: transform 0.2s ease;
+    }
+
+    .choice:hover {
+      transform: scale(1.1);
+    }
+
+    .green {
+      background-color: #4CAF50;
+    }
+
+    .red {
+      background-color: #f44336;
+    }
+  </style>
+</head>
+<body>
+  <!-- Background Music -->
+  <audio id="bgMusic" src="okaytagal.mp3" preload="auto"></audio>
+
+  <div id="text"></div>
+
+  <div id="questionContainer" style="display: none; flex-direction: column; align-items: center;">
+    <div id="question">Minahal mo ba?</div>
+    <div style="display: flex; gap: 20px;">
+      <div class="choice green" onclick="handleAnswer()">oo</div>
+      <div class="choice red" onclick="handleAnswer()">hindi</div>
+    </div>
+  </div>
+
+  <script>
+    const messages = [
+      "hi",
+      "😊",
+      "at nag babalik",
+      "nanaman si",
+      "JAY!",
+      "but this time..",
+      "i have a new question.",
+      "and the question is.."
+    ];
+
+    const textEl = document.getElementById("text");
+    const questionContainer = document.getElementById("questionContainer");
+    const bgMusic = document.getElementById("bgMusic");
+
+    let index = 0;
+
+    function showMessage() {
+      textEl.textContent = messages[index];
+      textEl.style.opacity = 1;
+
+      setTimeout(() => {
+        textEl.style.opacity = 0;
+        index++;
+        if (index < messages.length) {
+          setTimeout(showMessage, 1000);
+        } else {
+          setTimeout(() => {
+            textEl.style.display = "none";
+            questionContainer.style.display = "flex";
+            setTimeout(() => {
+              questionContainer.style.opacity = 1;
+            }, 100);
+          }, 1000);
+        }
+      }, 2000);
+    }
+
+    function handleAnswer() {
+      // Fade out everything
+      questionContainer.style.opacity = 0;
+      textEl.style.opacity = 0;
+      document.body.style.opacity = 0;
+
+      // Play music after fade out
+      setTimeout(() => {
+        bgMusic.play();
+      }, 1000);
+    }
+
+    showMessage();
+  </script>
+</body>
+</html>
