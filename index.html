@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <title>Jay's Random Question</title>
+
+  <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap" rel="stylesheet">
+
   <style>
     body {
       margin: 0;
@@ -16,7 +19,7 @@
       justify-content: center;
       align-items: center;
       flex-direction: column;
-      transition: background-color 1s ease, color 1s ease;
+      transition: background-color 1s ease, color 1s ease, opacity 1s ease-in-out;
       overflow: hidden;
     }
 
@@ -38,7 +41,7 @@
 
     .choice {
       padding: 15px 40px;
-      font-size: 6rem;
+      font-size: 5rem;
       color: white;
       border-radius: 10px;
       cursor: pointer;
@@ -68,15 +71,13 @@
       font-size: 5rem;
       text-align: center;
       opacity: 0;
-      transition: opacity 0.5s ease-in-out;
       font-family: 'Shadows Into Light', cursive;
-      color: black;
     }
   </style>
 </head>
 <body>
-  <!-- Background Music -->
-  <audio id="okayTagalAudio" src="okaytagal.mp3" preload="auto"></audio>
+  <!-- Audios -->
+  <audio id="okaytagal" src="okaytagal.mp3" preload="auto"></audio>
   <audio id="ooAudio" src="oo.mp3" preload="auto"></audio>
 
   <div id="text"></div>
@@ -84,8 +85,8 @@
   <div id="questionContainer" style="display: none; flex-direction: column; align-items: center;">
     <div id="question">Mahal mo paba?</div>
     <div style="display: flex; gap: 20px;">
-      <div class="choice green" onclick="playOO()">OO</div>
-      <div class="choice red" onclick="playHindiNa()">Hindi na</div>
+      <div class="choice green" onclick="handleAnswer('oo')">OO</div>
+      <div class="choice red" onclick="handleAnswer('hindi')">Hindi na</div>
     </div>
   </div>
 
@@ -103,7 +104,13 @@
       "and the question is.."
     ];
 
-    const originalLyrics = [
+    const lyricBox = document.getElementById("lyricsBox");
+    const textEl = document.getElementById("text");
+    const questionContainer = document.getElementById("questionContainer");
+    const audioOkayTagal = document.getElementById("okaytagal");
+    const audioOO = document.getElementById("ooAudio");
+
+    const lyricsOkayTagal = [
       { delay: 0, text: "Oh, kay tagal" },
       { delay: 3.5, text: "din kitang" },
       { delay: 7, text: "minahal" },
@@ -112,7 +119,7 @@
       { delay: 17.6, text: "minahal", final: true }
     ];
 
-    const ooLyrics = [
+    const lyricsOO = [
       { start: 0.2, end: 3.4, text: "wag mong piliting mahalin ka ng taong alam mong" },
       { start: 3.5, end: 5.5, text: "may mahal ng iba" },
       { start: 5.6, end: 7.2, text: "tandaan mo" },
@@ -129,90 +136,77 @@
       { start: 23.7, end: 26.5, text: "mamahalin :(", final: true }
     ];
 
-    const textEl = document.getElementById("text");
-    const questionContainer = document.getElementById("questionContainer");
-    const okayTagalAudio = document.getElementById("okayTagalAudio");
-    const ooAudio = document.getElementById("ooAudio");
-    const lyricBox = document.getElementById("lyricsBox");
-
-    let index = 0;
-
     function showMessage() {
+      let index = 0;
       textEl.textContent = messages[index];
       textEl.style.opacity = 1;
-      setTimeout(() => {
-        textEl.style.opacity = 0;
-        index++;
-        if (index < messages.length) {
-          setTimeout(showMessage, 1000);
-        } else {
-          setTimeout(() => {
-            textEl.style.display = "none";
-            questionContainer.style.display = "flex";
+
+      function next() {
+        setTimeout(() => {
+          textEl.style.opacity = 0;
+          index++;
+          if (index < messages.length) {
             setTimeout(() => {
-              questionContainer.style.opacity = 1;
-            }, 100);
-          }, 1000);
-        }
-      }, 2000);
-    }
+              textEl.textContent = messages[index];
+              textEl.style.opacity = 1;
+              next();
+            }, 1000);
+          } else {
+            setTimeout(() => {
+              textEl.style.display = "none";
+              questionContainer.style.display = "flex";
+              setTimeout(() => {
+                questionContainer.style.opacity = 1;
+              }, 100);
+            }, 1000);
+          }
+        }, 2000);
+      }
 
-    function playHindiNa() {
-      questionContainer.style.opacity = 0;
-      document.body.style.opacity = 0;
-
-      okayTagalAudio.pause();
-      okayTagalAudio.currentTime = 0;
-
-      setTimeout(() => {
-        document.body.style.opacity = 1;
-        okayTagalAudio.play().then(() => {
-          showLyrics(originalLyrics, true, 1.5);
-        });
-      }, 1000);
-    }
-
-    function playOO() {
-      questionContainer.style.opacity = 0;
-      document.body.style.opacity = 0;
-
-      ooAudio.pause();
-      ooAudio.currentTime = 0;
-
-      setTimeout(() => {
-        document.body.style.backgroundColor = "black";
-        document.body.style.color = "white";
-        lyricBox.style.color = "white";
-        document.body.style.opacity = 1;
-
-        ooAudio.play().then(() => {
-          showLyrics(ooLyrics, false);
-        });
-      }, 1000);
+      next();
     }
 
     function showLyrics(lyricsList, isDelayBased = false, delayOffset = 0) {
       lyricsList.forEach((line) => {
         const startTime = isDelayBased ? (delayOffset + line.delay) * 1000 : line.start * 1000;
-        const endTime = isDelayBased
-          ? (startTime + 2000)
-          : line.final
-          ? line.end * 1000 + 6000 // extend 6s fade for final line
-          : line.end * 1000;
-
-        const duration = endTime - startTime;
+        const isFinal = line.final || false;
+        const fadeIn = 250;
+        const fadeOut = isFinal ? 6000 : 250;
+        const duration = isDelayBased ? 2000 : (line.end * 1000 - line.start * 1000);
 
         setTimeout(() => {
           lyricBox.textContent = line.text;
-          lyricBox.style.transition = `opacity ${duration < 1500 ? 0.3 : 1}s ease-in-out`;
+          lyricBox.style.transition = `opacity ${fadeIn}ms ease-in-out`;
           lyricBox.style.opacity = 1;
         }, startTime);
 
         setTimeout(() => {
-          lyricBox.style.transition = `opacity ${line.final ? 6 : 0.5}s ease-in-out`;
+          lyricBox.style.transition = `opacity ${fadeOut}ms ease-in-out`;
           lyricBox.style.opacity = 0;
-        }, endTime);
+        }, startTime + duration);
       });
+    }
+
+    async function handleAnswer(choice) {
+      questionContainer.style.opacity = 0;
+      textEl.style.opacity = 0;
+      document.body.style.opacity = 0;
+
+      setTimeout(async () => {
+        if (choice === 'hindi') {
+          await audioOkayTagal.play();
+          document.body.style.backgroundColor = "white";
+          document.body.style.color = "black";
+          document.body.style.opacity = 1;
+          showLyrics(lyricsOkayTagal, true, 1.5);
+        } else {
+          await audioOO.play();
+          document.body.style.backgroundColor = "black";
+          document.body.style.color = "white";
+          document.body.style.opacity = 1;
+          showLyrics(lyricsOO);
+        }
+      }, 1000);
     }
 
     showMessage();
