@@ -41,7 +41,7 @@
 
     .choice {
       padding: 15px 40px;
-      font-size: 5rem;
+      font-size: 6rem; /* +3rem increase */
       color: white;
       border-radius: 10px;
       cursor: pointer;
@@ -149,6 +149,7 @@
       document.body.style.opacity = 0;
 
       setTimeout(() => {
+        bgMusic.volume = 1.0; // Max volume (100%)
         bgMusic.play();
         document.body.style.opacity = 1;
         showLyrics();
