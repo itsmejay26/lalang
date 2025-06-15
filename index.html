@@ -3,10 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Jay's Random Question</title>
-
-  <!-- Load Shadows Into Light font from Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap" rel="stylesheet">
-
   <style>
     body {
       margin: 0;
@@ -41,7 +38,7 @@
 
     .choice {
       padding: 15px 40px;
-      font-size: 6rem; /* +3rem increase */
+      font-size: 6rem;
       color: white;
       border-radius: 10px;
       cursor: pointer;
@@ -78,15 +75,16 @@
 </head>
 <body>
   <!-- Background Music -->
-  <audio id="bgMusic" src="okaytagal.mp3"></audio>
+  <audio id="okayTagalAudio" src="okaytagal.mp3"></audio>
+  <audio id="ooAudio" src="oo.mp3"></audio>
 
   <div id="text"></div>
 
   <div id="questionContainer" style="display: none; flex-direction: column; align-items: center;">
     <div id="question">Mahal mo paba?</div>
     <div style="display: flex; gap: 20px;">
-      <div class="choice green" onclick="handleAnswer()">OO</div>
-      <div class="choice red" onclick="handleAnswer()">Hindi na</div>
+      <div class="choice green" onclick="playOO()">OO</div>
+      <div class="choice red" onclick="playHindiNa()">Hindi na</div>
     </div>
   </div>
 
@@ -104,20 +102,36 @@
       "and the question is.."
     ];
 
-    const lyricsStartDelay = 1.5; // Seconds before lyrics start
-
-    const lyrics = [
+    const originalLyrics = [
       { delay: 0, text: "Oh, kay tagal" },
       { delay: 3.5, text: "din kitang" },
       { delay: 7, text: "minahal" },
       { delay: 11.8, text: "Oh, kay tagal" },
       { delay: 14.8, text: "din kitang" },
-      { delay: 17.6, text: "minahal" } // last line — will stay longer
+      { delay: 17.6, text: "minahal" }
+    ];
+
+    const ooLyrics = [
+      { start: 0.5, end: 2.8, text: "wag mong piliting mahalin ka ng taong alam mong" },
+      { start: 3.1, end: 4.8, text: "may mahal ng iba" },
+      { start: 5.6, end: 7.0, text: "tandaan mo" },
+      { start: 7.3, end: 8.8, text: "hindi ka pinanganak sa mundong ito" },
+      { start: 9.2, end: 10.1, text: "para mang limos" },
+      { start: 10.5, end: 12.1, text: "ng pag mamahal :(" },
+      { start: 12.4, end: 13.7, text: "at maging" },
+      { start: 14.0, end: 14.9, text: "pangalawa lang" },
+      { start: 15.1, end: 16.7, text: "sa kanya" },
+      { start: 17.0, end: 18.8, text: "meron kang option" },
+      { start: 19.1, end: 19.9, text: "ang palayain sya" },
+      { start: 20.2, end: 21.1, text: "at humanap ng taong" },
+      { start: 21.3, end: 23.0, text: "ikaw lang ang nag iisang" },
+      { start: 23.7, end: 26.5, text: "mamahalin :(" }
     ];
 
     const textEl = document.getElementById("text");
     const questionContainer = document.getElementById("questionContainer");
-    const bgMusic = document.getElementById("bgMusic");
+    const okayTagalAudio = document.getElementById("okayTagalAudio");
+    const ooAudio = document.getElementById("ooAudio");
     const lyricBox = document.getElementById("lyricsBox");
 
     let index = 0;
@@ -125,7 +139,6 @@
     function showMessage() {
       textEl.textContent = messages[index];
       textEl.style.opacity = 1;
-
       setTimeout(() => {
         textEl.style.opacity = 0;
         index++;
@@ -143,31 +156,41 @@
       }, 2000);
     }
 
-    function handleAnswer() {
+    function playHindiNa() {
       questionContainer.style.opacity = 0;
-      textEl.style.opacity = 0;
       document.body.style.opacity = 0;
-
       setTimeout(() => {
-        bgMusic.volume = 1.0; // Max volume (100%)
-        bgMusic.play();
         document.body.style.opacity = 1;
-        showLyrics();
+        okayTagalAudio.volume = 1.0;
+        okayTagalAudio.play();
+        showLyrics(originalLyrics, 1.5, true);
       }, 1000);
     }
 
-    function showLyrics() {
-      lyrics.forEach((line, i) => {
+    function playOO() {
+      questionContainer.style.opacity = 0;
+      document.body.style.opacity = 0;
+      setTimeout(() => {
+        document.body.style.opacity = 1;
+        ooAudio.volume = 1.0;
+        ooAudio.play();
+        showLyrics(ooLyrics, 0, false);
+      }, 1000);
+    }
+
+    function showLyrics(lyricsList, startDelay = 0, isDelayBased = true) {
+      lyricsList.forEach((line, i) => {
+        const showTime = isDelayBased ? (startDelay + line.delay) * 1000 : line.start * 1000;
+        const hideTime = isDelayBased ? (showTime + 2000) : line.end * 1000;
+
         setTimeout(() => {
           lyricBox.textContent = line.text;
           lyricBox.style.opacity = 1;
+        }, showTime);
 
-          const duration = (i === lyrics.length - 1) ? 5000 : 2000;
-
-          setTimeout(() => {
-            lyricBox.style.opacity = 0;
-          }, duration);
-        }, (lyricsStartDelay + line.delay) * 1000);
+        setTimeout(() => {
+          lyricBox.style.opacity = 0;
+        }, hideTime);
       });
     }
 
