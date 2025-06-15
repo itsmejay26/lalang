@@ -16,7 +16,7 @@
       justify-content: center;
       align-items: center;
       flex-direction: column;
-      transition: opacity 1s ease-in-out;
+      transition: background-color 1s ease, color 1s ease;
       overflow: hidden;
     }
 
@@ -68,8 +68,9 @@
       font-size: 5rem;
       text-align: center;
       opacity: 0;
-      transition: opacity 1s ease-in-out;
+      transition: opacity 0.5s ease-in-out;
       font-family: 'Shadows Into Light', cursive;
+      color: black;
     }
   </style>
 </head>
@@ -161,7 +162,6 @@
       document.body.style.opacity = 0;
       setTimeout(() => {
         document.body.style.opacity = 1;
-        okayTagalAudio.volume = 1.0;
         okayTagalAudio.play();
         showLyrics(originalLyrics, 1.5, true);
       }, 1000);
@@ -171,20 +171,26 @@
       questionContainer.style.opacity = 0;
       document.body.style.opacity = 0;
       setTimeout(() => {
+        // Change background and lyrics color
+        document.body.style.backgroundColor = "black";
+        document.body.style.color = "white";
+        lyricBox.style.color = "white";
+
         document.body.style.opacity = 1;
-        ooAudio.volume = 1.0;
         ooAudio.play();
         showLyrics(ooLyrics, 0, false);
       }, 1000);
     }
 
     function showLyrics(lyricsList, startDelay = 0, isDelayBased = true) {
-      lyricsList.forEach((line, i) => {
+      lyricsList.forEach((line) => {
         const showTime = isDelayBased ? (startDelay + line.delay) * 1000 : line.start * 1000;
         const hideTime = isDelayBased ? (showTime + 2000) : line.end * 1000;
+        const duration = hideTime - showTime;
 
         setTimeout(() => {
           lyricBox.textContent = line.text;
+          lyricBox.style.transition = `opacity ${duration < 1500 ? 0.3 : 1}s ease-in-out`;
           lyricBox.style.opacity = 1;
         }, showTime);
 
