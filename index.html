@@ -93,6 +93,8 @@
   <div id="lyricsBox"></div>
 
   <script>
+    const LYRICS_START_DELAY = 0.3; // Editable delay (in seconds) before any lyrics show
+
     const messages = [
       "Hi",
       "😊",
@@ -166,13 +168,17 @@
       next();
     }
 
-    function showLyrics(lyricsList, isDelayBased = false, delayOffset = 0) {
+    function showLyrics(lyricsList, isDelayBased = false) {
       lyricsList.forEach((line) => {
-        const startTime = isDelayBased ? (delayOffset + line.delay) * 1000 : line.start * 1000;
+        const startTime = isDelayBased
+          ? (LYRICS_START_DELAY + line.delay) * 1000
+          : (LYRICS_START_DELAY + line.start) * 1000;
         const isFinal = line.final || false;
         const fadeIn = 250;
         const fadeOut = isFinal ? 6000 : 250;
-        const duration = isDelayBased ? 2000 : (line.end * 1000 - line.start * 1000);
+        const duration = isDelayBased
+          ? 2000
+          : (line.end * 1000 - line.start * 1000);
 
         setTimeout(() => {
           lyricBox.textContent = line.text;
@@ -198,7 +204,7 @@
           document.body.style.backgroundColor = "white";
           document.body.style.color = "black";
           document.body.style.opacity = 1;
-          showLyrics(lyricsOkayTagal, true, 1.5);
+          showLyrics(lyricsOkayTagal, true);
         } else {
           await audioOO.play();
           document.body.style.backgroundColor = "black";
