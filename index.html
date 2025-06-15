@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Jay's Animated Question</title>
+  <title>Jay's Random Question</title>
   <style>
     body {
       margin: 0;
@@ -26,18 +26,18 @@
     }
 
     #text {
-      font-size: 2.5rem;
+      font-size: 3rem;
       max-width: 90vw;
     }
 
     #question {
-      font-size: 2.5rem;
+      font-size: 3rem;
       margin-bottom: 20px;
     }
 
     .choice {
       padding: 15px 40px;
-      font-size: 1.5rem;
+      font-size: 2rem;
       color: white;
       border-radius: 10px;
       cursor: pointer;
@@ -78,10 +78,10 @@
   <div id="text"></div>
 
   <div id="questionContainer" style="display: none; flex-direction: column; align-items: center;">
-    <div id="question">Minahal mo ba?</div>
+    <div id="question">Mahal mo paba?</div>
     <div style="display: flex; gap: 20px;">
       <div class="choice green" onclick="handleAnswer()">oo</div>
-      <div class="choice red" onclick="handleAnswer()">hindi</div>
+      <div class="choice red" onclick="handleAnswer()">hindi na</div>
     </div>
   </div>
 
@@ -99,12 +99,12 @@
       "and the question is.."
     ];
 
-    const lyricsStartDelay = 2; // Seconds before lyrics start
+    const lyricsStartDelay = 1.5; // Seconds before lyrics start
 
     const lyrics = [
       { delay: 0, text: "Oh, kay tagal" },
-      { delay: 3.7, text: "din kitang" },
-      { delay: 6.5, text: "minahal" },
+      { delay: 3.5, text: "din kitang" },
+      { delay: 6.7, text: "minahal" },
       { delay: 11.1, text: "Oh, kay tagal" },
       { delay: 14.8, text: "din kitang" },
       { delay: 17.6, text: "minahal" } // last line — will stay longer
